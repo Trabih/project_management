@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DATA ENTRY</title>
+    <!-- Link your CSS file here if you have one -->
+</head>
+<body style="background-color: #f5f5dc;"> <!-- Beige color -->
+    {% extends 'master.html' %}
+    {% load crispy_forms_tags %}
+
+    {% block content %}
+    <h1 style="background-color: #f2f2f291;">INFORMASI PROJECT</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" style="background-color: #007bff; color: white;">SAVE</button>
+    </form>
+
+    <div class="alert alert-warning" role="alert" style="background-color: #f2f2f2;">
+        Daftar Project
+    </div>
+    <table class="table table-bordered" id="data_entry_tbl" style="background-color: #ffffff;">
+        <thead>
+            <tr>
+                <th scope="col">Nama Project</th>
+                <th scope="col">Tanggal Mulai Project</th>
+                <th scope="col">Tanggal Selesai project</th>
+                <th scope="col">PIC Project</th>
+                <th scope="col">Status Project</th>
+                <th scope="col">Opsi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ProjectInfo in list_project %}
+            <tr class="record">
+                <td><label>{{ProjectInfo.nama_project}}</label></td>
+                <td><label>{{ProjectInfo.tangmul_project}}</label></td>
+                <td><label>{{ProjectInfo.tangsel_project}}</label></td>
+                <td><label>{{ProjectInfo.pic_project}}</label></td>
+                <td><label>{{ProjectInfo.status_project}}</label></td>
+                <td>
+                    <form method="post" action="#">
+                        {% csrf_token %}
+                        <a href="{% url 'de:set_anggota' ProjectInfo.id %}" style="background-color: #FFA500; color: white;">Tambah Anggota</a>
+                        <a href="{% url 'de:view_project' ProjectInfo.id %}" style="background-color: #2861a0; color: white;">View</a>
+                        <a href="{% url 'de:edit_project' ProjectInfo.id %}" style="background-color: #2f8000; color: black;">Edit</a>
+                        <a href="{% url 'de:delete_project' ProjectInfo.id %}" style="background-color: #ff0019; color: white;">Delete</a>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endblock %}
+</body>
+</html>
