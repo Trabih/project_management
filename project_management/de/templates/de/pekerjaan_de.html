@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.form-container {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.form-input {
+  margin-bottom: 20px;
+}
+
+.form-input label {
+  display: block;
+  font-weight: bold;
+}
+
+.form-input input,
+.form-input select,
+.form-input textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-button {
+  background-color: #2786BD;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="form-container">
+    <h2 class="form-title">Tambahkan Informasi Pekerjaan</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-input">
+        <label for="nama_pek">Nama Pekerjaan:</label>
+        <input type="text" id="nama_pek" name="nama_pek" placeholder="Masukkan Nama Pekerjaan">
+      </div>
+      <div class="form-input">
+        <label for="desk_pek">Deskripsi Pekerjaan:</label>
+        <textarea id="desk_pek" name="desk_pek" placeholder="Masukkan Deskripsi Pekerjaan"></textarea>
+      </div>
+      <div class="form-input">
+        <label for="tangmul_pek">Tanggal Mulai Pekerjaan:</label>
+        <input type="date" id="tangmul_pek" name="tangmul_pek" placeholder="Masukkan Tanggal Mulai Pekerjaan">
+      </div>
+      <div class="form-input">
+        <label for="tempatmul_pek">Tempat Mulai Pekerjaan:</label>
+        <input type="text" id="tempatmul_pek" name="tempatmul_pek" placeholder="Masukkan Tempat Mulai Pekerjaan">
+      </div>
+      <div class="form-input">
+        <label for="tangsel_pek">Tanggal Selesai Pekerjaan:</label>
+        <input type="date" id="tangsel_pek" name="tangsel_pek" placeholder="Masukkan Tanggal Selesai Pekerjaan">
+      </div>
+      <div class="form-input">
+        <label for="tempatsel_pek">Tempat Selesai Pekerjaan:</label>
+        <input type="text" id="tempatsel_pek" name="tempatsel_pek" placeholder="Masukkan Tempat Selesai Pekerjaan">
+      </div>
+      <div class="form-input">
+        <label for="pel_pek">Pelaksana Pekerjaan:</label>
+        <input type="text" id="pel_pek" name="pel_pek" placeholder="Masukkan Pelaksana Pekerjaan">
+      </div>
+      <div class="form-input">
+        <label for="super_pek">Supervisor Pekerjaan:</label>
+        <input type="text" id="super_pek" name="super_pek" placeholder="Masukkan Supervisor Pekerjaan">
+      </div>
+      <div class="form-input">
+        <label for="status_pek">Status Pekerjaan:</label>
+        <select id="status_pek" name="status_pek">
+          <option value="">CHOOSE STATE OF PROJECT ...</option>
+          <option value="Fn">Finished</option>
+          <option value="Pr">Progress</option>
+          <option value="Er">Error</option>
+        </select>
+      </div>
+      <button type="submit" class="form-button">Simpan</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

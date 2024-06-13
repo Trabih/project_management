@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.form-container {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.form-input {
+  margin-bottom: 20px;
+}
+
+.form-input label {
+  display: block;
+  font-weight: bold;
+}
+
+.form-input input,
+.form-input select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-button {
+  background-color: #2786BD;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="form-container">
+    <h2 class="form-title">Tambahkan Informasi Proyek</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-input">
+        <label for="nama_project">Nama Project:</label>
+        <input type="text" id="nama_project" name="nama_project" placeholder="Masukkan Nama Project">
+      </div>
+      <div class="form-input">
+        <label for="tujuan_project">Tujuan Project:</label>
+        <input type="text" id="tujuan_project" name="tujuan_project" placeholder="Masukkan Tujuan Project">
+      </div>
+      <div class="form-input">
+        <label for="tangmul_project">Tanggal Mulai Project:</label>
+        <input type="date" id="tangmul_project" name="tangmul_project">
+      </div>
+      <div class="form-input">
+        <label for="tangsel_project">Tanggal Selesai Project:</label>
+        <input type="date" id="tangsel_project" name="tangsel_project">
+      </div>
+      <div class="form-input">
+        <label for="pic_project">PIC Project:</label>
+        <input type="text" id="pic_project" name="pic_project" placeholder="Masukkan PIC Project">
+      </div>
+      <div class="form-input">
+        <label for="status_project">Status Project:</label>
+        <select id="status_project" name="status_project">
+          <option value="">CHOOSE STATE OF PROJECT ... </option>
+          <option value="Fn">Finished</option>
+          <option value="Pr">Progress</option>
+          <option value="Er">Error</option>
+        </select>
+      </div>
+      <button type="submit" class="form-button">Simpan</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>
