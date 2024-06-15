@@ -4,7 +4,7 @@
 
 <head>
   <style>
-   .button1 {
+   .button {
       background-color: #2786BD;
       border: none;
       color: white;
@@ -16,20 +16,8 @@
       margin: 4px 2px;
       cursor: pointer;
       border-radius: 5px;
+      margin-bottom: 20px;
     }
-
-    .button2 {
-      background-color: #2786BD;
-      border: none;
-      color: white;
-      padding: 15px 32px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 4px 2px;
-      cursor: pointer;
-      border-radius: 5px;
 
    .table {
       border-collapse: collapse;
@@ -108,8 +96,8 @@
 </script>
 <div>
   <div class="main-content-body">
-    <a href="{% url 'de:main_page' %}" class="button1">Home</a>
-    <a href="{% url 'de:set_pekerjaan' %}" class="button2">Buat Pekerjaan</a>
+    <a href="{% url 'de:main_page' %}" class="button">Home</a>
+    <a href="{% url 'de:set_pekerjaan' %}" class="button">Buat Pekerjaan</a>
 </div>
 
 <div>
@@ -120,6 +108,7 @@
             <th scope="col">Tanggal Mulai Pekerjaan</th>
             <th scope="col">Supervisor Pekerjaan</th>
             <th scope="col">Status Pekerjaan</th>
+            <th scope="col">Opsi</th>
         </tr>
     </thead>
     <tbody>
@@ -129,6 +118,14 @@
             <td>{{ Pekerjaan.pekerjaan.tangmul_pek }}</td>
             <td>{{ Pekerjaan.pekerjaan.super_pek }}</td>
             <td>{{ Pekerjaan.pekerjaan.status_pek }}</td>
+            <td>
+              <form method="post" action="#">
+                  {% csrf_token %}
+                  <a href="{% url 'de:view_project' ProjectInfo.id %}" style="background-color: #2861a0; color: white;">View</a>
+                  <a href="{% url 'de:edit_project' ProjectInfo.id %}" style="background-color: #2f8000; color: black;">Edit</a>
+                  <a href="{% url 'de:delete_project' ProjectInfo.id %}" style="background-color: #ff0019; color: white;">Delete</a>
+              </form>
+          </td>
         </tr>
         {% endfor %}
     </tbody>
