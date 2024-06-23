@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-0bmkq5wpf32wfub&*a027(l9ar4!qbcm(rl@tf*1yc8i0^s)id
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["10.24.81.227", "*", "192.168.0.117"]
 
 
 # Application definition
@@ -40,10 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'de',
     'crispy_forms',
-    'crispy_bootstrap4',
+    #'crispy_bootstrap4',
+    'rest_framework',
 ]
-CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
-CRISPY_TEMPLATE_PACK =  'bootstrap4'
+#CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
+#CRISPY_TEMPLATE_PACK =  'bootstrap4'
 
 
 MIDDLEWARE = [
@@ -82,10 +83,15 @@ WSGI_APPLICATION = 'project_management.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'pm_db_api',  
+        'USER': 'root',       
+        'PASSWORD': '',       
+        'HOST': 'localhost',  
+        'PORT': '3306',       
     }
 }
+#Inf)rm@tik4
 
 
 # Password validation

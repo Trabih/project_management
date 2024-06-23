@@ -12,17 +12,6 @@ class ProjectInfo(models.Model):
     def __str__(self) -> str:
         return f'{self.nama_project}'
 
-class Anggota(models.Model):
-    project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE, related_name='anggota', default=1)
-    nama_ang = models.CharField(max_length=40)
-    tangla_ang = models.DateField()
-    deskom_ang = models.CharField(max_length=1000)
-    deskpen_ang = models.CharField(max_length=1000)
-    peran_ang = models.TextField()
-
-    def __str__(self) -> str:
-        return f'{self.nama_ang}'
-
 class Pekerjaan(models.Model):
     project = models.ForeignKey(ProjectInfo, on_delete=models.CASCADE, related_name='pekerjaan', default=1)
     nama_pek = models.CharField(max_length=40)

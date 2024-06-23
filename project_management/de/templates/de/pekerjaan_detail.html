@@ -1,0 +1,127 @@
+  {% extends 'master.html' %}
+  {% load crispy_forms_tags %}
+  {% block content %}
+
+  <head>
+    <style>
+    .button {
+        background-color: #2786BD;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+    .table th,.table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+
+    .table th {
+        background-color: #f0f0f0;
+      }
+
+    .table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+    .table tr:hover {
+        background-color: #ddd;
+      }
+    </style>
+  </head>
+
+  <h1>Detail Pekerjaan</h1>
+  <div id="pekerjaan_details">
+      <div class="form-input">
+        <label>Project:</label>
+        <p>{{ pekerjaan.project.nama_project }}</p>
+      </div>
+      <div class="form-input">
+        <label>Nama Pekerjaan:</label>
+        <p>{{ pekerjaan.nama_pek }}</p>
+      </div>
+      <div class="form-input">
+        <label>Deskripsi Pekerjaan:</label>
+        <p>{{ pekerjaan.desk_pek }}</p>
+      </div>
+      <div class="form-input">
+        <label>Tanggal Mulai Pekerjaan:</label>
+        <p>{{ pekerjaan.tangmul_pek }}</p>
+      </div>
+      <div class="form-input">
+        <label>Tempat Mulai Pekerjaan:</label>
+        <p>{{ pekerjaan.tempatmul_pek }}</p>
+      </div>
+      <div class="form-input">
+        <label>Tanggal Selesai Pekerjaan:</label>
+        <p>{{ pekerjaan.tangsel_pek }}</p>
+      </div>
+      <div class="form-input">
+        <label>Tempat Selesai Pekerjaan:</label>
+        <p>{{ pekerjaan.tempatsel_pek }}</p>
+      </div>
+      <div class="form-input">
+        <label>Pelaksana Pekerjaan:</label>
+        <p>{{ pekerjaan.pel_pek }}</p>
+      </div>
+      <div class="form-input">
+        <label>Supervisor Pekerjaan:</label>
+        <p>{{ pekerjaan.super_pek }}</p>
+      </div>
+      <div class="form-input">
+        <label>Status Pekerjaan:</label>
+        <p>{{ pekerjaan.status_pek }}</p>
+      </div>
+  </div>
+
+  <div class="main-content-body">
+    <a href="{% url 'de:main_page' %}" class="button">Home</a>
+    <a href="{% url 'de:set_aktivitas' pekerjaan.id %}" class="button">Tambah Aktivitas</a>
+  </div>
+
+  <div>
+    <h2>Aktivitas</h2>
+    <table class="table">
+      <thead>
+          <tr>
+              <th scope="col">Nama Aktivitas</th>
+              <th scope="col">Pelaksana Aktivitas</th>
+              <th scope="col">Status Aktivitas</th>
+              <th scope="col">Opsi</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for aktivitas in pekerjaan.aktivitas.all %}
+          <tr class="record">
+              <td>{{ aktivitas.nama_akti }}</td>
+              <td>{{ aktivitas.pel_akti }}</td>
+              <td>{{ aktivitas.status_pek }}</td>
+              <td>
+                <form method="post" action="#">
+                    {% csrf_token %}
+                    <a href="{% url 'de:view_aktivitas' aktivitas.id %}" style="background-color: #2861a0; color: white;">View</a>
+                    <a href="{% url 'de:edit_aktivitas' aktivitas.id %}" style="background-color: #2f8000; color: black;">Edit</a>
+                    <a href="{% url 'de:delete_aktivitas' aktivitas.id %}" style="background-color: #ff0019; color: white;">Delete</a>
+                </form>
+              </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% endblock %}

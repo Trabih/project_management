@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.form-container {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 1000px;
+}
+
+.form-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.form-input {
+  margin-bottom: 20px;
+}
+
+.form-input label {
+  display: block;
+  font-weight: bold;
+}
+
+.form-input input,
+.form-input select,
+.form-input textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-button {
+  background-color: #2786BD;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="form-container">
+    <h2 class="form-title">Edit Informasi Aktivitas</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-input">
+        <label for="{{ form.nama_akti.id_for_label }}">Nama Aktivitas:</label>
+        {{ form.nama_akti }}
+      </div>
+      <div class="form-input">
+        <label for="{{ form.wakpel_akti.id_for_label }}">Waktu Pelaksanaan Aktivitas:</label>
+        {{ form.wakpel_akti }}
+      </div>
+      <div class="form-input">
+        <label for="{{ form.pel_akti.id_for_label }}">Pelaksana Aktivitas:</label>
+        {{ form.pel_akti }}
+      </div>
+      <div class="form-input">
+        <label for="{{ form.eval_akti.id_for_label }}">Evaluasi Aktivitas:</label>
+        {{ form.eval_akti }}
+      </div>
+      <div class="form-input">
+        <label for="{{ form.ren_akti.id_for_label }}">Rencana Aktivitas:</label>
+        {{ form.ren_akti }}
+      </div>
+      <div class="form-input">
+        <label for="{{ form.status_pek.id_for_label }}">Status Aktivitas:</label>
+        {{ form.status_pek }}
+      </div>
+      <button type="submit" class="form-button">Save Changes</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

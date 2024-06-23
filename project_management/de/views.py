@@ -1,7 +1,15 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from .forms import ProjectForm,AnggotaForm,PekerjaanForm,AktivitasForm
-from .models import ProjectInfo,Anggota,Pekerjaan,Aktivitas
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
+from .models import ProjectInfo, Pekerjaan,Aktivitas
+from .forms import ProjectForm, PekerjaanForm, AktivitasForm
+import requests
+from .serializers import ProjectInfoSerializer,AktivitasSerializer,PekerjaanSerializer
+from django.http import JsonResponse
+from rest_framework import generics
+from datetime import date
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 def main_page(request):
     list_project = ProjectInfo.objects.all().order_by('-id')
@@ -10,38 +18,29 @@ def main_page(request):
     }
     return render(request, 'de/de.html', context)
 
-
-# Create your views here.
 def set_project(request):
-    list_project = ProjectInfo.objects.all().order_by('-id')  
-    context = None
+    list_project = ProjectInfo.objects.all().order_by('-id')
     form = ProjectForm(None)
     if request.method == "POST":
         form = ProjectForm(request.POST)
         if form.is_valid():
-            form.save()
-            list_project = ProjectInfo.objects.all().order_by('-id')
-            context = {
-              "form": form, 
-              "list_project": list_project,
-              "ProjectInfo" : ProjectInfo,
-              }
-            return render(request, 'de/project_de.html', context)
-    else:
-        list_project = ProjectInfo.objects.all().order_by('-id')
-        context = {
-            "form": form, 
-            "list_project": list_project,
-            "ProjectInfo" : ProjectInfo,
-            }
-        return render(request, "de/project_de.html", context)
-    
+            project = form.save()
+            #kirim_ke_IE(project)
+            return redirect('de:main_page')
+    context = {
+        "form": form,
+        "list_project": list_project,
+    }
+    return render(request, "de/project_de.html", context)
+
 def view_project(request, id):
-    try:
-        project = ProjectInfo.objects.get(pk=id)
-        return render(request, 'de/project_detail.html', {'project_id': project.id})
-    except ProjectInfo.DoesNotExist:
-        return JsonResponse({'error': 'project not found'}, status=404)
+    project = get_object_or_404(ProjectInfo, pk=id)
+    list_pekerjaan = Pekerjaan.objects.filter(project=project)
+    context = {
+        'project': project,
+        'list_pekerjaan': list_pekerjaan,
+    }
+    return render(request, 'de/project_detail.html', context)
 
 def get_project_detail_api(request, project_id):
     try:
@@ -62,65 +61,46 @@ def get_project_detail_api(request, project_id):
 def deleteproject(request, id):
     project = get_object_or_404(ProjectInfo, pk=id)
     project.delete()
-    return redirect('de:set_de')
+    return redirect('de:main_page')
 
 def editproject(request, id):
     project = get_object_or_404(ProjectInfo, pk=id)
     form = ProjectForm(request.POST or None, instance=project)
     if form.is_valid():
         form.save()
-        return redirect('de:set_de')
+        return redirect('de:main_page')
     return render(request, 'de/project_edit.html', {'form': form})
 
-def set_anggota(request, id):
-    project = get_object_or_404(ProjectInfo, pk=id)  # Get the project by id
-    form = AnggotaForm(None)
-    if request.method == 'POST':
-        form = AnggotaForm(request.POST)
-        if form.is_valid():
-            anggota = form.save(commit=False)
-            anggota.project = project  # Associate the new anggota with the project
-            anggota.save()
-            context = {
-                "form": form,
-                "project": project,
-                "success_message": "Anggota added successfully"
-            }
-            return render(request, 'de/anggota.html', context)
-    else:
-        context = {
-            "form": form,
-            "project": project
-        }
-        return render(request, 'de/anggota.html', context)
 
-def set_pekerjaan(request):
-    list_pekerjaan = Pekerjaan.objects.all().order_by('-id')
-    context = None
+def set_pekerjaan(request, project_id):
+    project = get_object_or_404(ProjectInfo, pk=project_id)
     form = PekerjaanForm(None)
     if request.method == "POST":
         form = PekerjaanForm(request.POST)
         if form.is_valid():
-            form.save()
-            list_pekerjaan = Pekerjaan.objects.all().order_by('-id')
-            context = {
-                "form": form,
-                "list_pekerjaan": list_pekerjaan,
-                "Pekerjaan": Pekerjaan,
-            }
-            return render(request, 'de/pekerjaan_de.html', context)
-    else:
-        list_pekerjaan = Pekerjaan.objects.all().order_by('-id')
-        context = {
-            "form": form,
-            "list_pekerjaan": list_pekerjaan,
-            "Pekerjaan": Pekerjaan,
-        }
-        return render(request, "de/pekerjaan_de.html", context)
+            pekerjaan = form.save(commit=False)
+            pekerjaan.project = project
+            pekerjaan.save()
+            redirect_url = 'de:view_project'
+            print(f"Redirecting to: {redirect_url}, with id: {project.id}")
+            return redirect(redirect_url, id=project.id)
+    context = {
+        'form': form,
+        'project': project
+    }
+    return render(request, 'de/pekerjaan_de.html', context)
 
-def get_pekerjaan_detail_api(request, user_id):
+
+def view_pekerjaan(request, id):
+    pekerjaan = get_object_or_404(Pekerjaan, pk=id)
+    context = {
+        'pekerjaan': pekerjaan
+    }
+    return render(request, 'de/pekerjaan_detail.html', context)
+
+def get_pekerjaan_detail_api(request, pekerjaan_id):
     try:
-        pekerjaan = Pekerjaan.objects.get(pk=user_id)
+        pekerjaan = get_object_or_404(Pekerjaan, pk=pekerjaan_id)
         data = {
             'nama_pek': pekerjaan.nama_pek,
             'desk_pek': pekerjaan.desk_pek,
@@ -134,4 +114,123 @@ def get_pekerjaan_detail_api(request, user_id):
         }
         return JsonResponse(data)
     except Pekerjaan.DoesNotExist:
-        return JsonResponse({'error': 'Pekerjaan not found'}, status=404)
+        return JsonResponse({'error': 'pekerjaan not found'}, status=404)
+
+def delete_pekerjaan(request, id):
+    pekerjaan = get_object_or_404(Pekerjaan, pk=id)
+    pekerjaan.delete()
+    return redirect('de:main_page')
+
+def edit_pekerjaan(request, id):
+    pekerjaan = get_object_or_404(Pekerjaan, pk=id)
+    form = PekerjaanForm(request.POST or None, instance=pekerjaan)
+    if form.is_valid():
+        form.save()
+        return redirect('de:view_project', id=pekerjaan.project.id)
+    return render(request, 'de/pekerjaan_edit.html', {'form': form})
+
+def set_aktivitas(request, pekerjaan_id):
+    pekerjaan = get_object_or_404(Pekerjaan, pk=pekerjaan_id)
+    form = AktivitasForm()
+    if request.method == "POST":
+        form = AktivitasForm(request.POST)
+        if form.is_valid():
+            aktivitas = form.save(commit=False)
+            aktivitas.pekerjaan = pekerjaan
+            aktivitas.save()
+            redirect_url = 'de:view_pekerjaan'
+            return redirect(redirect_url, id=pekerjaan.id)
+    context = {
+        'form': form,
+        'pekerjaan': pekerjaan
+    }
+    return render(request, 'de/aktivitas_de.html', context)
+
+def view_aktivitas(request, id):
+    aktivitas = get_object_or_404(Aktivitas, pk=id)
+    context = {
+        'aktivitas': aktivitas
+    }
+    return render(request, 'de/aktivitas_detail.html', context)
+
+def edit_aktivitas(request, id):
+    aktivitas = get_object_or_404(Aktivitas, pk=id)
+    form = AktivitasForm(request.POST or None, instance=aktivitas)
+    if form.is_valid():
+        form.save()
+        return redirect('de:view_pekerjaan', id=aktivitas.pekerjaan.id)
+    return render(request, 'de/aktivitas_edit.html', {'form': form})
+
+def delete_aktivitas(request, id):
+    aktivitas = get_object_or_404(Aktivitas, pk=id)
+    pekerjaan_id = aktivitas.pekerjaan.id
+    aktivitas.delete()
+    return redirect('de:view_pekerjaan', id=pekerjaan_id)
+
+def get_aktivitas_detail_api(request, aktivitas_id):
+    try:
+        aktivitas = get_object_or_404(Aktivitas, pk=aktivitas_id)
+        data = {
+            'nama_akti': aktivitas.nama_akti,
+            'wakpel_akti': aktivitas.wakpel_akti,
+            'pel_akti': aktivitas.pel_akti,
+            'eval_akti': aktivitas.eval_akti,
+            'ren_akti': aktivitas.ren_akti,
+            'status_pek': aktivitas.status_pek,
+        }
+        return JsonResponse(data)
+    except Aktivitas.DoesNotExist:
+        return JsonResponse({'error': 'Aktivitas not found'}, status=404)
+
+#API
+
+class SemuadataView(APIView):
+    def get(self, request, *args, **kwargs):
+        projects = ProjectInfo.objects.all()
+        projects_serializer = ProjectInfoSerializer(projects, many=True)
+
+        pekerjaan = Pekerjaan.objects.all()
+        pekerjaan_serializer = PekerjaanSerializer(pekerjaan, many=True)
+
+        aktivitas = Aktivitas.objects.all()
+        aktivitas_serializer = AktivitasSerializer(aktivitas, many=True)
+
+        combined_data = {
+            'projects': projects_serializer.data,
+            'pekerjaan': pekerjaan_serializer.data,
+            'aktivitas': aktivitas_serializer.data,
+        }
+
+        return Response(combined_data)
+    
+class ProjectInfoUpdateView(generics.UpdateAPIView):
+    queryset = ProjectInfo.objects.all()
+    serializer_class = ProjectInfoSerializer
+
+class PekerjaanUpdateView(generics.UpdateAPIView):
+    queryset = Pekerjaan.objects.all()
+    serializer_class = PekerjaanSerializer
+
+class AktivitasUpdateView(generics.UpdateAPIView):
+    queryset = Aktivitas.objects.all()
+    serializer_class = AktivitasSerializer
+
+
+class SendProjectData(APIView):
+
+    def get(self, request, pk, format=None):
+        project = get_object_or_404(ProjectInfo, pk=pk)
+        serializer = ProjectInfoSerializer(project)
+
+        data_to_send = {
+            'project_name': serializer.data['nama_project'],
+
+        }
+
+        # Send the data to your friend's API
+        response = requests.post('link', json=data_to_send)
+        
+        if response.status_code == 201:
+            return Response({'status': 'success'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'status': 'error', 'details': response.json()}, status=status.HTTP_400_BAD_REQUEST)

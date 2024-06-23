@@ -10,7 +10,7 @@ body {
 }
 
 h1 {
-    color: #0A3B61
+    color: #0A3B61;
 }
 
 .container {
@@ -28,6 +28,20 @@ h1 {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.send-button {
+  background-color: #FFA500; /* Different color for send button */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 5px;
@@ -115,11 +129,9 @@ h1 {
 }
 
 .main-content-body {
-    background-color: #fff;
-    height: 430px;
-    padding: 20px;
-    border-radius: 10px;
-  
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .main-content-body h2 {
@@ -138,7 +150,7 @@ h1 {
   width: 100%;
 }
 
-.table th,.table td {
+.table th, .table td {
   border: 1px solid #ddd;
   padding: 10px;
   text-align: left;
@@ -155,26 +167,32 @@ h1 {
 .table tr:hover {
   background-color: #ddd;
 }
+
+.button-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
 </style>
 </head>
 <body>
 <div class="container">
   <div class="sidebar">
     <div class="sidebar-header">
-      <img src="C:\Users\Lenovo\Documents\Universitas Trisakti\Semester 4\web - projectlab\logo.png" class="sidebar-logo" alt="Project Logo">
       <h1 class="sidebar-title">ProjectLab</h1>
     </div>
     <ul class="sidebar-nav">
       <li><a href="{% url 'de:main_page' %}">Project</a></li>
-      <li><a href="#">Grup</a></li>
     </ul>
   </div>
   <div class="main-content">
     <div class="main-content-header">
-      <input type="text" class="search-bar" placeholder="Cari grup atau projek...">
+      <input type="text" class="search-bar" placeholder="Cari projek...">
     </div>
     <div class="main-content-body">
+      <div class="button-container">
         <a href="{% url 'de:set_project' %}" class="button">Buat Proyek</a>
+      </div>
       <div class="cactus">
         <table class="table">
           <thead>
@@ -198,11 +216,11 @@ h1 {
                   <td>
                       <form method="post" action="#">
                           {% csrf_token %}
-                          <a href="{% url 'de:set_anggota' ProjectInfo.id %}" style="background-color: #FFA500; color: white;">Tambah Anggota</a>
                           <a href="{% url 'de:view_project' ProjectInfo.id %}" style="background-color: #2861a0; color: white;">View</a>
                           <a href="{% url 'de:edit_project' ProjectInfo.id %}" style="background-color: #2f8000; color: black;">Edit</a>
                           <a href="{% url 'de:delete_project' ProjectInfo.id %}" style="background-color: #ff0019; color: white;">Delete</a>
                       </form>
+                      <button type="button" class="send-button" onclick="sendProjectData({{ ProjectInfo.id }})">Send Data</button>
                   </td>
               </tr>
               {% endfor %}
@@ -212,5 +230,29 @@ h1 {
     </div>
   </div>
 </div>
+
+<script>
+    function sendProjectData(projectId) {
+        fetch('/api/send_project_data/' + projectId + '/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token your_token_here'  // Replace with actual token if needed
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Data sent successfully!');
+            } else {
+                return response.json().then(data => {
+                    throw new Error(data.detail);
+                });
+            }
+        })
+        .catch(error => {
+            alert('Failed to send data: ' + error.message);
+        });
+    }
+</script>
 </body>
 </html>

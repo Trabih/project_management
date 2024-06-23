@@ -65,47 +65,31 @@ body {
 <body>
 <div class="container">
   <div class="form-container">
-    <h2 class="form-title">Tambahkan Informasi Pekerjaan</h2>
+    <h2 class="form-title">Tambahkan Informasi Aktivitas</h2>
     <form method="post">
       {% csrf_token %}
       <div class="form-input">
-        <label for="{{ form.project.id_for_label }}">Project:</label>
-        {{ form.project }}
+        <label for="{{ form.nama_akti.id_for_label }}">Nama Aktivitas:</label>
+        {{ form.nama_akti }}
       </div>
       <div class="form-input">
-        <label for="{{ form.nama_pek.id_for_label }}">Nama Pekerjaan:</label>
-        {{ form.nama_pek }}
+        <label for="{{ form.wakpel_akti.id_for_label }}">Waktu Pelaksanaan Aktivitas:</label>
+        {{ form.wakpel_akti }}
       </div>
       <div class="form-input">
-        <label for="{{ form.desk_pek.id_for_label }}">Deskripsi Pekerjaan:</label>
-        {{ form.desk_pek }}
+        <label for="{{ form.pel_akti.id_for_label }}">Pelaksana Aktivitas:</label>
+        {{ form.pel_akti }}
       </div>
       <div class="form-input">
-        <label for="{{ form.tangmul_pek.id_for_label }}">Tanggal Mulai Pekerjaan:</label>
-        {{ form.tangmul_pek }}
+        <label for="{{ form.eval_akti.id_for_label }}">Evaluasi Aktivitas:</label>
+        {{ form.eval_akti }}
       </div>
       <div class="form-input">
-        <label for="{{ form.tempatmul_pek.id_for_label }}">Tempat Mulai Pekerjaan:</label>
-        {{ form.tempatmul_pek }}
+        <label for="{{ form.ren_akti.id_for_label }}">Rencana Aktivitas:</label>
+        {{ form.ren_akti }}
       </div>
       <div class="form-input">
-        <label for="{{ form.tangsel_pek.id_for_label }}">Tanggal Selesai Pekerjaan:</label>
-        {{ form.tangsel_pek }}
-      </div>
-      <div class="form-input">
-        <label for="{{ form.tempatsel_pek.id_for_label }}">Tempat Selesai Pekerjaan:</label>
-        {{ form.tempatsel_pek }}
-      </div>
-      <div class="form-input">
-        <label for="{{ form.pel_pek.id_for_label }}">Pelaksana Pekerjaan:</label>
-        {{ form.pel_pek }}
-      </div>
-      <div class="form-input">
-        <label for="{{ form.super_pek.id_for_label }}">Supervisor Pekerjaan:</label>
-        {{ form.super_pek }}
-      </div>
-      <div class="form-input">
-        <label for="{{ form.status_pek.id_for_label }}">Status Pekerjaan:</label>
+        <label for="{{ form.status_pek.id_for_label }}">Status Aktivitas:</label>
         {{ form.status_pek }}
       </div>
       <button type="submit" class="form-button">Simpan</button>

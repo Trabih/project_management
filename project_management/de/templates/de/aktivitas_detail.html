@@ -1,0 +1,98 @@
+{% extends 'master.html' %}
+{% block content %}
+
+<head>
+  <style>
+   .button {
+      background-color: #2786BD;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+   .table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+   .table th,.table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+   .table th {
+      background-color: #f0f0f0;
+    }
+
+   .table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+   .table tr:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+
+<h1>Detail Aktivitas</h1>
+<div id="aktivitas_details"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var aktivitasId = {{ aktivitas.id }} ;
+
+        fetch('/api/aktivitas/' + aktivitasId + '/')
+           .then(response => response.json())
+           .then(data => {
+                var aktivitasDetailsDiv = document.getElementById('aktivitas_details');
+                var tableHtml = `
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th scope="row">Nama Aktivitas</th>
+                        <td>${data.nama_akti}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Waktu Pelaksanaan</th>
+                        <td>${data.wakpel_akti}</td>                            
+                      </tr>
+                      <tr>
+                        <th scope="row">Pelaksana</th>
+                        <td>${data.pel_akti}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Evaluasi</th>
+                        <td>${data.eval_akti}</td>                            
+                      </tr>
+                      <tr>
+                        <th scope="row">Rencana</th>
+                        <td>${data.ren_akti}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Status</th>
+                        <td>${data.status_pek}</td>                            
+                      </tr>
+                    </tbody> 
+                  </table>`;
+                aktivitasDetailsDiv.innerHTML = tableHtml;
+            })
+           .catch(error => console.error('Error fetching aktivitas details', error));
+    });
+</script>
+
+<div class="main-content-body">
+  <a href="{% url 'de:view_pekerjaan' aktivitas.pekerjaan.id %}" class="button">Back to Pekerjaan</a>
+  <a href="{% url 'de:edit_aktivitas' aktivitas.id %}" class="button">Edit</a>
+  <a href="{% url 'de:delete_aktivitas' aktivitas.id %}" class="button">Delete</a>
+</div>
+
+{% endblock %}
