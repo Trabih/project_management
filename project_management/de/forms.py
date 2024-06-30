@@ -15,10 +15,11 @@ class ProjectForm(forms.ModelForm):
     tangsel_project = forms.DateField(label='Tanggal Selesai Project', widget=forms.DateInput(attrs={'placeholder': "Masukkan Tanggal Selesai Proyek", 'type': 'date'}))
     pic_project = forms.CharField(label='PIC Project :', widget=forms.TextInput(attrs={'placeholder': 'Masukkan PIC Project'}))
     status_project = forms.ChoiceField(choices=STATE)
+    biaya = forms.IntegerField(label='Biaya Project :', widget=forms.NumberInput(attrs={'placeholder': 'Masukkan Biaya Project atau boleh kosong dan akan diakumulasikan dari pekerjaan'}))
 
     class Meta:
         model = ProjectInfo
-        exclude = ["tanggal_add"]
+        exclude = ["tanggal_add","is_archived", "signature_picture"]
 
 
 class PekerjaanForm(forms.ModelForm):
@@ -31,6 +32,8 @@ class PekerjaanForm(forms.ModelForm):
     pel_pek = forms.CharField(label='Pelaksana Pekerjaan :', widget=forms.TextInput(attrs={'placeholder': 'Masukkan Pelaksana Pekerjaan'}))
     super_pek = forms.CharField(label='Supervisor Pekerjaan :', widget=forms.TextInput(attrs={'placeholder': 'Masukkan Supervisor Pekerjaan'}))
     status_pek = forms.ChoiceField(label='Status Pekerjaan :', choices=STATE)
+    biaya_pek = forms.IntegerField(label='Biaya Project :', widget=forms.NumberInput(attrs={'placeholder': 'Masukkan Biaya Project atau boleh kosong dan akan diakumulasikan dari aktivitas'}))
+
 
     class Meta:
         model = Pekerjaan
@@ -44,6 +47,8 @@ class AktivitasForm(forms.ModelForm):
     eval_akti = forms.CharField(label='Evaluasi Aktivitas :', required=False, widget=forms.TextInput(attrs={'placeholder': 'Masukkan Evaluasi Aktivitas'}))
     ren_akti = forms.CharField(label='Rencana Aktivitas :', required= False, widget=forms.TextInput(attrs={'placeholder': 'Masukkan Rencana Aktivitas'}))
     status_pek = forms.ChoiceField(label='Status Aktivitas :', choices=STATE)
+    biaya_ak = forms.IntegerField(label='Biaya Project :', widget=forms.NumberInput(attrs={'placeholder': 'Masukkan Biaya Aktivitas'}))
+
 
     class Meta:
         model = Aktivitas

@@ -10,7 +10,7 @@ body {
 }
 
 h1 {
-    color: #0A3B61;
+  color: #0A3B61;
 }
 
 .container {
@@ -23,7 +23,7 @@ h1 {
   background-color: #2786BD;
   border: none;
   color: white;
-  padding: 15px 32px;
+  padding: 10px 20px; /* Adjusted padding */
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -138,11 +138,10 @@ h1 {
   margin-bottom: 20px;
 }
 
-.cactus {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 300px;
+.table-container {
+  max-height: 400px; /* Set a fixed height for the table container */
+  overflow-y: auto; /* Add vertical scrolling */
+  margin-top: 20px; /* Added margin to top of the table container */
 }
 
 .table {
@@ -183,6 +182,7 @@ h1 {
     </div>
     <ul class="sidebar-nav">
       <li><a href="{% url 'de:main_page' %}">Project</a></li>
+      <li><a href="{% url 'de:archived_projects' %}">Archive</a></li>
     </ul>
   </div>
   <div class="main-content">
@@ -193,7 +193,7 @@ h1 {
       <div class="button-container">
         <a href="{% url 'de:set_project' %}" class="button">Buat Proyek</a>
       </div>
-      <div class="cactus">
+      <div class="table-container">
         <table class="table">
           <thead>
               <tr>
@@ -207,6 +207,7 @@ h1 {
           </thead>
           <tbody>
               {% for ProjectInfo in list_project %}
+              {% if not ProjectInfo.is_archived %}
               <tr class="record">
                   <td><label>{{ProjectInfo.nama_project}}</label></td>
                   <td><label>{{ProjectInfo.tangmul_project}}</label></td>
@@ -216,13 +217,14 @@ h1 {
                   <td>
                       <form method="post" action="#">
                           {% csrf_token %}
-                          <a href="{% url 'de:view_project' ProjectInfo.id %}" style="background-color: #2861a0; color: white;">View</a>
-                          <a href="{% url 'de:edit_project' ProjectInfo.id %}" style="background-color: #2f8000; color: black;">Edit</a>
-                          <a href="{% url 'de:delete_project' ProjectInfo.id %}" style="background-color: #ff0019; color: white;">Delete</a>
+                          <a href="{% url 'de:view_project' ProjectInfo.id %}" style="background-color: #2861a0; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">View</a>
+                          <a href="{% url 'de:edit_project' ProjectInfo.id %}" style="background-color: #2f8000; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Edit</a>
+                          <a href="{% url 'de:delete_project' ProjectInfo.id %}" style="background-color: #ff0019; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Delete</a>
+                          <a href="{% url 'de:archive_project_confirmation' ProjectInfo.id %}" style="background-color: #FFA500; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Close Project</a>
                       </form>
-                      <button type="button" class="send-button" onclick="sendProjectData({{ ProjectInfo.id }})">Send Data</button>
                   </td>
               </tr>
+              {% endif %}
               {% endfor %}
           </tbody>
       </table>

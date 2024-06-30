@@ -10,6 +10,7 @@ from datetime import date
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Sum 
 
 def main_page(request):
     list_project = ProjectInfo.objects.all().order_by('-id')
@@ -53,6 +54,7 @@ def get_project_detail_api(request, project_id):
             'pic': project.pic_project,
             'status': project.status_project,
             'tanggal_add': project.tanggal_add,
+            'biaya': project.biaya,
         }
         return JsonResponse(data)
     except ProjectInfo.DoesNotExist:
@@ -72,6 +74,32 @@ def editproject(request, id):
     return render(request, 'de/project_edit.html', {'form': form})
 
 
+def archived_projects(request):
+    archived_projects = ProjectInfo.objects.filter(is_archived=True)
+    context = {
+        'archived_projects': archived_projects
+    }
+    return render(request, 'de/archived_projects.html', context)
+
+def archive_project_confirmation(request, project_id):
+    project = get_object_or_404(ProjectInfo, pk=project_id)
+    if request.method == "POST":
+        signature_picture = request.FILES.get('signature_picture')
+        if signature_picture:
+            project.signature_picture = signature_picture
+
+        # Mark the project as archived  
+        project.is_archived = True
+        project.save()
+        return redirect('de:main_page')
+
+    context = {
+        'project': project
+    }
+    return render(request, 'de/archive_confirmation.html', context)
+
+
+
 def set_pekerjaan(request, project_id):
     project = get_object_or_404(ProjectInfo, pk=project_id)
     form = PekerjaanForm(None)
@@ -82,6 +110,7 @@ def set_pekerjaan(request, project_id):
             pekerjaan.project = project
             pekerjaan.save()
             redirect_url = 'de:view_project'
+            update_project_biaya(project)
             print(f"Redirecting to: {redirect_url}, with id: {project.id}")
             return redirect(redirect_url, id=project.id)
     context = {
@@ -111,6 +140,7 @@ def get_pekerjaan_detail_api(request, pekerjaan_id):
             'pel_pek': pekerjaan.pel_pek,
             'super_pek': pekerjaan.super_pek,
             'status_pek': pekerjaan.status_pek,
+            'biaya_pek': pekerjaan.biaya_pek,
         }
         return JsonResponse(data)
     except Pekerjaan.DoesNotExist:
@@ -126,6 +156,7 @@ def edit_pekerjaan(request, id):
     form = PekerjaanForm(request.POST or None, instance=pekerjaan)
     if form.is_valid():
         form.save()
+        update_project_biaya(pekerjaan.project)
         return redirect('de:view_project', id=pekerjaan.project.id)
     return render(request, 'de/pekerjaan_edit.html', {'form': form})
 
@@ -139,6 +170,7 @@ def set_aktivitas(request, pekerjaan_id):
             aktivitas.pekerjaan = pekerjaan
             aktivitas.save()
             redirect_url = 'de:view_pekerjaan'
+            update_pekerjaan_biaya(pekerjaan)
             return redirect(redirect_url, id=pekerjaan.id)
     context = {
         'form': form,
@@ -158,6 +190,7 @@ def edit_aktivitas(request, id):
     form = AktivitasForm(request.POST or None, instance=aktivitas)
     if form.is_valid():
         form.save()
+        update_pekerjaan_biaya(aktivitas.pekerjaan)
         return redirect('de:view_pekerjaan', id=aktivitas.pekerjaan.id)
     return render(request, 'de/aktivitas_edit.html', {'form': form})
 
@@ -177,10 +210,22 @@ def get_aktivitas_detail_api(request, aktivitas_id):
             'eval_akti': aktivitas.eval_akti,
             'ren_akti': aktivitas.ren_akti,
             'status_pek': aktivitas.status_pek,
+            'biaya_ak': aktivitas.biaya_ak,
         }
         return JsonResponse(data)
     except Aktivitas.DoesNotExist:
         return JsonResponse({'error': 'Aktivitas not found'}, status=404)
+    
+def update_pekerjaan_biaya(pekerjaan):
+    total_biaya = pekerjaan.aktivitas.aggregate(total=Sum('biaya_ak'))['total'] or 0.00
+    pekerjaan.biaya = total_biaya
+    pekerjaan.save()
+    update_project_biaya(pekerjaan.project)
+
+def update_project_biaya(project):
+    total_biaya = project.pekerjaan.aggregate(total=Sum('biaya_pek'))['total'] or 0.00
+    project.biaya = total_biaya
+    project.save()
 
 #API
 
@@ -215,9 +260,7 @@ class AktivitasUpdateView(generics.UpdateAPIView):
     queryset = Aktivitas.objects.all()
     serializer_class = AktivitasSerializer
 
-
 class SendProjectData(APIView):
-
     def get(self, request, pk, format=None):
         project = get_object_or_404(ProjectInfo, pk=pk)
         serializer = ProjectInfoSerializer(project)

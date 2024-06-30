@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #0A3B61;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .button {
+            background-color: #2786BD;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .sidebar {
+            background-color: #fff;
+            width: 250px;
+            padding: 20px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .main-content-body {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f0f0f0;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tr:hover {
+            background-color: #ddd;
+        }
+
+        .button {
+            background-color: #2786BD;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">ProjectLab</h1>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="{% url 'de:main_page' %}">Project</a></li>
+            <li><a href="{% url 'de:archived_projects' %}">Archive</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="main-content-body">
+            <h1>Archived Projects</h1>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nama Project</th>
+                            <th scope="col">Tanggal Mulai Project</th>
+                            <th scope="col">Tanggal Selesai Project</th>
+                            <th scope="col">PIC Project</th>
+                            <th scope="col">Status Project</th>
+                            <th scope="col">Opsi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ProjectInfo in archived_projects %}
+                        <tr class="record">
+                            <td><label>{{ProjectInfo.nama_project}}</label></td>
+                            <td><label>{{ProjectInfo.tangmul_project}}</label></td>
+                            <td><label>{{ProjectInfo.tangsel_project}}</label></td>
+                            <td><label>{{ProjectInfo.pic_project}}</label></td>
+                            <td><label>{{ProjectInfo.status_project}}</label></td>
+                            <td>
+                                <a href="{% url 'de:view_project' ProjectInfo.id %}" class="button">View</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

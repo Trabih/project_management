@@ -1,3 +1,7 @@
+# project_management/urls.py
+
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
 from . import views
 
@@ -11,15 +15,17 @@ urlpatterns = [
     path('api/project/<int:project_id>/', views.get_project_detail_api, name='get_project_detail_api'),
     path('main/delete_project/<int:id>/', views.deleteproject, name='delete_project'),
     path('main/edit_project/<int:id>/', views.editproject, name='edit_project'),
+    path('main/<int:project_id>/archive_confirmation/', views.archive_project_confirmation, name='archive_project_confirmation'),
+    path('archived_projects/', views.archived_projects, name='archived_projects'),
 
-    #Pekerjaan
+    # Pekerjaan
     path('main/<int:project_id>/set_pekerjaan/', views.set_pekerjaan, name='set_pekerjaan'),
     path('main/view_pekerjaan/<int:id>/', views.view_pekerjaan, name='view_pekerjaan'),
     path('api/pekerjaan/<int:pekerjaan_id>/', views.get_pekerjaan_detail_api, name='get_pekerjaan_detail_api'),
     path('main/delete_pekerjaan/<int:id>/', views.delete_pekerjaan, name='delete_pekerjaan'),
     path('main/edit_pekerjaan/<int:id>/', views.edit_pekerjaan, name='edit_pekerjaan'),
 
-    #Aktivitas
+    # Aktivitas
     path('main/<int:pekerjaan_id>/set_aktivitas/', views.set_aktivitas, name='set_aktivitas'),
     path('main/view_aktivitas/<int:id>/', views.view_aktivitas, name='view_aktivitas'),
     path('main/edit_aktivitas/<int:id>/', views.edit_aktivitas, name='edit_aktivitas'),
@@ -32,8 +38,6 @@ urlpatterns = [
     path('api/pekerjaan/<int:pk>/update/', views.PekerjaanUpdateView.as_view(), name='update_pekerjaan'),
     path('api/aktivitas/<int:pk>/update/', views.AktivitasUpdateView.as_view(), name='update_aktivitas'),
 
-     # Send project data API path
-    path('api/send_project_data/<int:pk>/', views.SendProjectData.as_view(), name='send_project_data'),
-
-]
-
+    # Send project data API path
+    #path('api/send_project_data/<int:pk>/', views.SendProjectData.as_view(), name='send_project_data'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
