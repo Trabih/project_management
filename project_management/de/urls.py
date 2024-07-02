@@ -34,10 +34,8 @@ urlpatterns = [
 
     # API project
     path('api/projects/', views.SemuadataView.as_view(), name='api_projects'),
-    path('api/projects/<int:pk>/update/', views.ProjectInfoUpdateView.as_view(), name='update_project_info'),
-    path('api/pekerjaan/<int:pk>/update/', views.PekerjaanUpdateView.as_view(), name='update_pekerjaan'),
-    path('api/aktivitas/<int:pk>/update/', views.AktivitasUpdateView.as_view(), name='update_aktivitas'),
-
-    # Send project data API path
-    #path('api/send_project_data/<int:pk>/', views.SendProjectData.as_view(), name='send_project_data'),
+    path('api/projects/<int:pk>/update/', views.ProjectInfoDetailUpdate.as_view(), name='update_project_info'),
+    path('api/pekerjaan/<int:pk>/update/', views.PekerjaanDetailUpdate.as_view(), name='update_pekerjaan'),
+    path('api/aktivitas/<int:pk>/update/', views.AktivitasDetailUpdate.as_view(), name='update_aktivitas'),
+    path('api/project/<int:pk>/notify_deployment/', views.notify_project_deployment, name='notify_project_deployment'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

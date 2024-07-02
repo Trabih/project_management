@@ -4,7 +4,7 @@
 
 <head>
   <style>
-   .button {
+    .button {
       background-color: #2786BD;
       border: none;
       color: white;
@@ -19,121 +19,141 @@
       margin-bottom: 20px;
     }
 
-   .table {
+    .table {
       border-collapse: collapse;
       width: 100%;
     }
 
-   .table th,.table td {
+    .table th, .table td {
       border: 1px solid #ddd;
       padding: 10px;
       text-align: left;
     }
 
-   .table th {
+    .table th {
       background-color: #f0f0f0;
     }
 
-   .table tr:nth-child(even) {
+    .table tr:nth-child(even) {
       background-color: #f9f9f9;
     }
 
-   .table tr:hover {
+    .table tr:hover {
       background-color: #ddd;
     }
   </style>
 </head>
 
 <h1>Detail Project</h1>
-<div id="project_details">
-  
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var projectId = {{ project.id }} ;
+<div id="project_details"></div>
 
-        fetch('/api/project/' + projectId + '/')
-           .then(response => response.json())
-           .then(data => {
-                var projectDetailsDiv = document.getElementById('project_details');
-                var tableHtml = `
-                  <table class="table">
-                    <tbody>
-                      <tr>
-                        <th scope="row">Nama</th>
-                        <td>${data.nama}</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Tujuan</th>
-                        <td>${data.tujuan}</td>                            
-                      </tr>
-                      <tr>
-                        <th scope="row">Tanggal Mulai</th>
-                        <td>${data.tangmul}</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Tanggal Selesai</th>
-                        <td>${data.tangsel}</td>                            
-                      </tr>
-                      <tr>
-                        <th scope="row">PIC</th>
-                        <td>${data.pic}</td>
-                      </tr>
-                     <tr>
-                        <th scope="row">PIC</th>
-                        <td>${data.biaya}</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Status</th>
-                        <td>${data.status}</td>                            
-                      </tr>
-                      <tr>
-                        <th scope="row">Tanggal Data di Add</th>
-                        <td>${data.tanggal_add}</td>                            
-                      </tr>
-                    </tbody> 
-                  </table>`;
-                projectDetailsDiv.innerHTML = tableHtml;
-            })
-           .catch(error => console.error('Error fetching project details', error));
-    });
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var projectId = {{ project.id }};
+
+    fetch('/api/project/' + projectId + '/')
+      .then(response => response.json())
+      .then(data => {
+        var projectDetailsDiv = document.getElementById('project_details');
+        var tableHtml = `
+          <table class="table">
+            <tbody>
+              <tr>
+                <th scope="row">Nama</th>
+                <td>${data.nama}</td>
+              </tr>
+              <tr>
+                <th scope="row">Tujuan</th>
+                <td>${data.tujuan}</td>                            
+              </tr>
+              <tr>
+                <th scope="row">Tanggal Mulai</th>
+                <td>${data.tangmul}</td>
+              </tr>
+              <tr>
+                <th scope="row">Tanggal Selesai</th>
+                <td>${data.tangsel}</td>                            
+              </tr>
+              <tr>
+                <th scope="row">PIC</th>
+                <td>${data.pic}</td>
+              </tr>
+              <tr>
+                <th scope="row">Biaya</th>
+                <td>${data.biaya}</td>
+              </tr>
+              <tr>
+                <th scope="row">Status</th>
+                <td>${data.status}</td>                            
+              </tr>
+              <tr>
+                <th scope="row">Tanggal Data di Add</th>
+                <td>${data.tanggal_add}</td>                            
+              </tr>
+            </tbody> 
+          </table>`;
+        projectDetailsDiv.innerHTML = tableHtml;
+      })
+      .catch(error => console.error('Error fetching project details', error));
+  });
+
+  function notifyProjectDeployment(projectId) {
+    fetch(`/api/project/${projectId}/notify_deployment/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        alert('Notification sent successfully!');
+      } else {
+        alert('Failed to send notification: ' + data.details);
+      }
+    })
+    .catch(error => console.error('Error sending notification', error));
+  }
 </script>
+
 <div>
   <div class="main-content-body">
     <a href="{% url 'de:main_page' %}" class="button">Home</a>
     <a href="{% url 'de:set_pekerjaan' project.id %}" class="button">Buat Pekerjaan</a>
+    <a href="#" onclick="notifyProjectDeployment({{ project.id }}); return false;" class="button">Notify Deployment</a>
   </div>
 
   <div>
     <table class="table">
       <thead>
-          <tr>
-              <th scope="col">Nama Pekerjaan</th>
-              <th scope="col">Tanggal Mulai Pekerjaan</th>
-              <th scope="col">Supervisor Pekerjaan</th>
-              <th scope="col">Status Pekerjaan</th>
-              <th scope="col">Opsi</th>
-          </tr>
+        <tr>
+          <th scope="col">Nama Pekerjaan</th>
+          <th scope="col">Tanggal Mulai Pekerjaan</th>
+          <th scope="col">Supervisor Pekerjaan</th>
+          <th scope="col">Status Pekerjaan</th>
+          <th scope="col">Opsi</th>
+        </tr>
       </thead>
       <tbody>
-          {% for pekerjaan in list_pekerjaan %}
-          <tr class="record">
-              <td>{{ pekerjaan.nama_pek }}</td>
-              <td>{{ pekerjaan.tangmul_pek }}</td>
-              <td>{{ pekerjaan.super_pek }}</td>
-              <td>{{ pekerjaan.status_pek }}</td>
-              <td>
-                <form method="post" action="#">
-                    {% csrf_token %}
-                    <a href="{% url 'de:view_pekerjaan' pekerjaan.id %}" style="background-color: #2861a0; color: white;">View</a>
-                    <a href="{% url 'de:edit_pekerjaan' pekerjaan.id %}" style="background-color: #2f8000; color: black;">Edit</a>
-                    <a href="{% url 'de:delete_pekerjaan' pekerjaan.id %}" style="background-color: #ff0019; color: white;">Delete</a>
-                </form>
-            </td>
-          </tr>
-          {% endfor %}
+        {% for pekerjaan in list_pekerjaan %}
+        <tr class="record">
+          <td>{{ pekerjaan.nama_pek }}</td>
+          <td>{{ pekerjaan.tangmul_pek }}</td>
+          <td>{{ pekerjaan.super_pek }}</td>
+          <td>{{ pekerjaan.status_pek }}</td>
+          <td>
+            <form method="post" action="#">
+              {% csrf_token %}
+              <a href="{% url 'de:view_pekerjaan' pekerjaan.id %}" style="background-color: #2861a0; color: white;">View</a>
+              <a href="{% url 'de:edit_pekerjaan' pekerjaan.id %}" style="background-color: #2f8000; color: black;">Edit</a>
+              <a href="{% url 'de:delete_pekerjaan' pekerjaan.id %}" style="background-color: #ff0019; color: white;">Delete</a>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
+
 {% endblock %}

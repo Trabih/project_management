@@ -46,8 +46,8 @@ class AktivitasForm(forms.ModelForm):
     pel_akti = forms.CharField(label='Pelaksana Aktivitas :', widget=forms.TextInput(attrs={'placeholder': 'Masukkan Pelaksana Aktivitas'}))
     eval_akti = forms.CharField(label='Evaluasi Aktivitas :', required=False, widget=forms.TextInput(attrs={'placeholder': 'Masukkan Evaluasi Aktivitas'}))
     ren_akti = forms.CharField(label='Rencana Aktivitas :', required= False, widget=forms.TextInput(attrs={'placeholder': 'Masukkan Rencana Aktivitas'}))
-    status_pek = forms.ChoiceField(label='Status Aktivitas :', choices=STATE)
-    biaya_ak = forms.IntegerField(label='Biaya Project :', widget=forms.NumberInput(attrs={'placeholder': 'Masukkan Biaya Aktivitas'}))
+    status_akti = forms.ChoiceField(label='Status Aktivitas :', choices=STATE)
+    biaya_akti = forms.IntegerField(label='Biaya Project :', widget=forms.NumberInput(attrs={'placeholder': 'Masukkan Biaya Aktivitas'}))
 
 
     class Meta:

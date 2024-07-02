@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from .models import ProjectInfo, Pekerjaan,Aktivitas
 from .forms import ProjectForm, PekerjaanForm, AktivitasForm
 import requests
-from .serializers import ProjectInfoSerializer,AktivitasSerializer,PekerjaanSerializer
+from .serializers import *
 from django.http import JsonResponse
 from rest_framework import generics
 from datetime import date
@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Sum 
+from rest_framework.decorators import api_view
 
 def main_page(request):
     list_project = ProjectInfo.objects.all().order_by('-id')
@@ -209,8 +210,8 @@ def get_aktivitas_detail_api(request, aktivitas_id):
             'pel_akti': aktivitas.pel_akti,
             'eval_akti': aktivitas.eval_akti,
             'ren_akti': aktivitas.ren_akti,
-            'status_pek': aktivitas.status_pek,
-            'biaya_ak': aktivitas.biaya_ak,
+            'status_akti': aktivitas.status_akti,
+            'biaya_akti': aktivitas.biaya_akti,
         }
         return JsonResponse(data)
     except Aktivitas.DoesNotExist:
@@ -248,32 +249,28 @@ class SemuadataView(APIView):
 
         return Response(combined_data)
     
-class ProjectInfoUpdateView(generics.UpdateAPIView):
+class ProjectInfoDetailUpdate(generics.RetrieveUpdateAPIView):
     queryset = ProjectInfo.objects.all()
-    serializer_class = ProjectInfoSerializer
+    serializer_class = ProjectInfoUpdateSerializer
 
-class PekerjaanUpdateView(generics.UpdateAPIView):
+class PekerjaanDetailUpdate(generics.RetrieveUpdateAPIView):
     queryset = Pekerjaan.objects.all()
-    serializer_class = PekerjaanSerializer
+    serializer_class = PekerjaanUpdateSerializer
 
-class AktivitasUpdateView(generics.UpdateAPIView):
+class AktivitasDetailUpdate(generics.RetrieveUpdateAPIView):
     queryset = Aktivitas.objects.all()
-    serializer_class = AktivitasSerializer
+    serializer_class = AktivitasUpdateSerializer
 
-class SendProjectData(APIView):
-    def get(self, request, pk, format=None):
-        project = get_object_or_404(ProjectInfo, pk=pk)
-        serializer = ProjectInfoSerializer(project)
+    
+@api_view(['POST'])
+def notify_project_deployment(request, pk):
+    project = get_object_or_404(ProjectInfo, pk=pk)
+    response = requests.post('http://implementation_module/api/notify/', json={
+        'project_name': project.nama_project,
+        'message': 'Project is ready to be deployed.'
+    })
 
-        data_to_send = {
-            'project_name': serializer.data['nama_project'],
-
-        }
-
-        # Send the data to your friend's API
-        response = requests.post('link', json=data_to_send)
-        
-        if response.status_code == 201:
-            return Response({'status': 'success'}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'status': 'error', 'details': response.json()}, status=status.HTTP_400_BAD_REQUEST)
+    if response.status_code == 201:
+        return Response({'status': 'success'}, status=status.HTTP_201_CREATED)
+    else:
+        return Response({'status': 'error', 'details': response.json()}, status=status.HTTP_400_BAD_REQUEST)

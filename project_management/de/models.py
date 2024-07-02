@@ -40,8 +40,8 @@ class Aktivitas(models.Model):
     pel_akti = models.CharField(max_length=1000)
     eval_akti = models.CharField(max_length=1000)
     ren_akti = models.CharField(max_length=1000)
-    status_pek = models.TextField()
-    biaya_ak = models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
+    status_akti = models.TextField()
+    biaya_akti = models.DecimalField(max_digits=12,decimal_places=2,default=0.00)
 
     def __str__(self) -> str:
         return f'{self.nama_akti}'
