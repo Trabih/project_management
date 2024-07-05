@@ -89,7 +89,11 @@ body {
         {{ form.ren_akti }}
       </div>
       <div class="form-input">
-        <label for="{{ form.status_pek.id_for_label }}">Status Aktivitas:</label>
+        <label for="{{ form.biaya_akti.id_for_label }}">Biaya Aktivitas:</label>
+        {{ form.biaya_akti }}
+      </div>
+      <div class="form-input">
+        <label for="{{ form.status_akti.id_for_label }}">Status Aktivitas:</label>
         {{ form.status_pek }}
       </div>
       <button type="submit" class="form-button">Save Changes</button>

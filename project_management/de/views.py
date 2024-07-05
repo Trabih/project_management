@@ -12,6 +12,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Sum 
 from rest_framework.decorators import api_view
+from django.shortcuts import render
+from django.db.models import Q
+from django.contrib import messages
 
 def main_page(request):
     list_project = ProjectInfo.objects.all().order_by('-id')
@@ -48,6 +51,7 @@ def get_project_detail_api(request, project_id):
     try:
         project = ProjectInfo.objects.get(pk=project_id)
         data = {
+            'id': project.id,
             'nama': project.nama_project,
             'tujuan': project.tujuan_project,
             'tangmul': project.tangmul_project,
@@ -75,6 +79,47 @@ def editproject(request, id):
     return render(request, 'de/project_edit.html', {'form': form})
 
 
+def search_view(request):
+    query = request.GET.get('q', '')
+    results = []
+    if query:
+        project_results = ProjectInfo.objects.filter(
+            Q(nama_project__icontains=query)
+        )
+        pekerjaan_results = Pekerjaan.objects.filter(
+            Q(nama_pek__icontains=query)
+        )
+        aktivitas_results = Aktivitas.objects.filter(
+            Q(nama_akti__icontains=query)
+        )
+
+        for project in project_results:
+            results.append({
+                'type': 'Project',
+                'name': project.nama_project,
+                'details': f'Tujuan: {project.tujuan_project}, Status: {project.status_project}',
+                'url': f'/main/view/{project.id}/'
+            })
+        for pekerjaan in pekerjaan_results:
+            results.append({
+                'type': 'Pekerjaan',
+                'name': pekerjaan.nama_pek,
+                'details': f'Deskripsi: {pekerjaan.desk_pek}, Status: {pekerjaan.status_pek}',
+                'url': f'/main/view_pekerjaan/{pekerjaan.id}/'
+            })
+        for aktivitas in aktivitas_results:
+            results.append({
+                'type': 'Aktivitas',
+                'name': aktivitas.nama_akti,
+                'details': f'Pelaksana: {aktivitas.pel_akti}, Status: {aktivitas.status_akti}',
+                'url': f'/main/view_aktivitas/{aktivitas.id}/'
+            })
+
+    return render(request, 'de/search_results.html', {
+        'query': query,
+        'results': results,
+    })
+
 def archived_projects(request):
     archived_projects = ProjectInfo.objects.filter(is_archived=True)
     context = {
@@ -100,9 +145,12 @@ def archive_project_confirmation(request, project_id):
     return render(request, 'de/archive_confirmation.html', context)
 
 
-
 def set_pekerjaan(request, project_id):
     project = get_object_or_404(ProjectInfo, pk=project_id)
+    if project.is_archived:
+        messages.error(request, "Cannot add pekerjaan to an archived project.")
+        return redirect('de:view_project', id=project_id)
+        
     form = PekerjaanForm(None)
     if request.method == "POST":
         form = PekerjaanForm(request.POST)
@@ -110,16 +158,13 @@ def set_pekerjaan(request, project_id):
             pekerjaan = form.save(commit=False)
             pekerjaan.project = project
             pekerjaan.save()
-            redirect_url = 'de:view_project'
             update_project_biaya(project)
-            print(f"Redirecting to: {redirect_url}, with id: {project.id}")
-            return redirect(redirect_url, id=project.id)
+            return redirect('de:view_project', id=project.id)
     context = {
         'form': form,
         'project': project
     }
     return render(request, 'de/pekerjaan_de.html', context)
-
 
 def view_pekerjaan(request, id):
     pekerjaan = get_object_or_404(Pekerjaan, pk=id)
@@ -163,6 +208,11 @@ def edit_pekerjaan(request, id):
 
 def set_aktivitas(request, pekerjaan_id):
     pekerjaan = get_object_or_404(Pekerjaan, pk=pekerjaan_id)
+    project = pekerjaan.project
+    if project.is_archived:
+        messages.error(request, "Cannot add aktivitas to a pekerjaan in an archived project.")
+        return redirect('de:view_pekerjaan', id=pekerjaan_id)
+        
     form = AktivitasForm()
     if request.method == "POST":
         form = AktivitasForm(request.POST)
@@ -170,9 +220,8 @@ def set_aktivitas(request, pekerjaan_id):
             aktivitas = form.save(commit=False)
             aktivitas.pekerjaan = pekerjaan
             aktivitas.save()
-            redirect_url = 'de:view_pekerjaan'
             update_pekerjaan_biaya(pekerjaan)
-            return redirect(redirect_url, id=pekerjaan.id)
+            return redirect('de:view_pekerjaan', id=pekerjaan.id)
     context = {
         'form': form,
         'pekerjaan': pekerjaan
@@ -218,7 +267,7 @@ def get_aktivitas_detail_api(request, aktivitas_id):
         return JsonResponse({'error': 'Aktivitas not found'}, status=404)
     
 def update_pekerjaan_biaya(pekerjaan):
-    total_biaya = pekerjaan.aktivitas.aggregate(total=Sum('biaya_ak'))['total'] or 0.00
+    total_biaya = pekerjaan.aktivitas.aggregate(total=Sum('biaya_akti'))['total'] or 0.00
     pekerjaan.biaya = total_biaya
     pekerjaan.save()
     update_project_biaya(pekerjaan.project)
@@ -265,7 +314,7 @@ class AktivitasDetailUpdate(generics.RetrieveUpdateAPIView):
 @api_view(['POST'])
 def notify_project_deployment(request, pk):
     project = get_object_or_404(ProjectInfo, pk=pk)
-    response = requests.post('http://implementation_module/api/notify/', json={
+    response = requests.post('http://10.24.80.64:8004/sistem_implementasi/api/notify/', json={
         'project_name': project.nama_project,
         'message': 'Project is ready to be deployed.'
     })

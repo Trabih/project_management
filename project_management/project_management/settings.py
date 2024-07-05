@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-0bmkq5wpf32wfub&*a027(l9ar4!qbcm(rl@tf*1yc8i0^s)id
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["10.24.81.227", "*", "192.168.0.117"]
+ALLOWED_HOSTS = ["10.24.81.227", "*", "192.168.0.117" , "10.24.80.64"]
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'rest_framework',
+    'corsheaders',
 ]
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
 CRISPY_TEMPLATE_PACK =  'bootstrap4'
@@ -55,6 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'project_management.urls'

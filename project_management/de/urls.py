@@ -38,4 +38,7 @@ urlpatterns = [
     path('api/pekerjaan/<int:pk>/update/', views.PekerjaanDetailUpdate.as_view(), name='update_pekerjaan'),
     path('api/aktivitas/<int:pk>/update/', views.AktivitasDetailUpdate.as_view(), name='update_aktivitas'),
     path('api/project/<int:pk>/notify_deployment/', views.notify_project_deployment, name='notify_project_deployment'),
+
+    #Search
+    path('search/', views.search_view, name='search'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
